@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.mdanylko.ingests.telemetry.entity";
+option java_outer_classname = "Telemetry";
+
+service TelemetryService {
+  rpc saveTelemetry (TelemetryRequestDto) returns (TelemetryResponseDto);
+}
+
+message TelemetryRequestDto {
+  string timestamp = 1;
+
+  message GPS {
+    double lat = 1;
+    double lon = 2;
+    double alt = 3;
+  }
+
+  message Velocity {
+    double vx = 1;
+    double vy = 2;
+    double vz = 3;
+  }
+
+  message Attitude {
+    double roll = 1;
+    double pitch = 2;
+    double yaw = 3;
+  }
+
+  message Battery {
+    double voltage = 1;
+    double current = 2;
+  }
+
+  message Status {
+    bool armed = 1;
+    bool failsafe = 2;
+  }
+}
+
+message TelemetryResponseDto {
+  string timestamp = 1;
+  bool processed = 2;
+}
