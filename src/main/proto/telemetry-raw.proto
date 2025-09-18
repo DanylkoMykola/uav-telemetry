@@ -2,14 +2,19 @@ syntax = "proto3";
 
 option java_multiple_files = true;
 option java_package = "org.mdanylko.ingests.telemetry.entity";
-option java_outer_classname = "Telemetry";
+option java_outer_classname = "TelemetryProto";
 
 service TelemetryService {
-  rpc saveTelemetry (TelemetryRequestDto) returns (TelemetryResponseDto);
+  rpc processTelemetry (TelemetryRequestDto) returns (TelemetryResponseDto);
 }
 
 message TelemetryRequestDto {
   string timestamp = 1;
+  GPS gps = 2;
+  Velocity velocity = 3;
+  Attitude attitude = 4;
+  Battery battery = 5;
+  Status status = 6;
 
   message GPS {
     double lat = 1;
