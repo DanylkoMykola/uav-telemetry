@@ -1,6 +1,6 @@
-package org.mdanylko.ingests.telemetry.entity;
+package org.mdanylko.uav.simulator.dto;
 
-public class CopyTelemetryResponseDto {
+public class TelemetryResponseDto {
     private String timestamp;
     private boolean processed;
 

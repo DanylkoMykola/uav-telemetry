@@ -1,6 +1,6 @@
-package org.mdanylko.ingests.telemetry.entity;
+package org.mdanylko.uav.simulator.dto;
 
-public class CopyTelemetryRequestDto {
+public class TelemetryRequestDto {
     private String timestamp;
 
     public static class GPS {
