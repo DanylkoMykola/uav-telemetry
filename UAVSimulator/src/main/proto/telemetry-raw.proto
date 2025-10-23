@@ -1,3 +1,4 @@
+/*
 syntax = "proto3";
 
 option java_multiple_files = true;
@@ -48,4 +49,4 @@ message TelemetryRequestDto {
 message TelemetryResponseDto {
   string timestamp = 1;
   bool processed = 2;
-}
+}*/
