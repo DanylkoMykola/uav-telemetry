@@ -1,7 +1,9 @@
 package org.mdanylko.uav.simulator.simulator.sensor;
 
+import org.mdanylko.uav.simulator.constant.Constants;
 import org.mdanylko.uav.simulator.sensor.GPS;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.scanner.Constant;
 
 import java.util.Random;
 
@@ -10,8 +12,6 @@ public class GpsDataSimulatorImpl implements GpsDataSimulator {
 
     private GPS gps;
     private final Random rnd = new Random();
-    // Earth radius in meters
-    private static final double R = 6_371_000;
 
     public GpsDataSimulatorImpl() {
         this.gps = new GPS(49.8397, 24.0297, 350.0, 12.5, 45.0);
@@ -64,7 +64,7 @@ public class GpsDataSimulatorImpl implements GpsDataSimulator {
         double lat = Math.toRadians(latDeg);
         double lon = Math.toRadians(lonDeg);
         double brng = Math.toRadians(bearingDeg);
-        double dDivR = distanceMeters / R;
+        double dDivR = distanceMeters / Constants.EARTH_RADIUS;
 
         double lat2 = Math.asin(Math.sin(lat) * Math.cos(dDivR) + Math.cos(lat) * Math.sin(dDivR) * Math.cos(brng));
         double lon2 = lon + Math.atan2(

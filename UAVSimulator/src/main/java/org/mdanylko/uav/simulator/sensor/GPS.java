@@ -1,6 +1,6 @@
 package org.mdanylko.uav.simulator.sensor;
 
-public class GPS {
+public class GPS implements Cloneable {
 
     private double lat;
     private double lon;
@@ -65,4 +65,14 @@ public class GPS {
         sb.append('}');
         return sb.toString();
     }
+
+    @Override
+    public GPS clone() {
+        try {
+            return (GPS) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

@@ -1,9 +1,11 @@
 package org.mdanylko.uav.simulator.simulator.impl;
 
+import org.mdanylko.uav.simulator.sensor.Status;
 import org.mdanylko.uav.simulator.simulator.sensor.AttitudeDataSimulator;
 import org.mdanylko.uav.simulator.simulator.sensor.GpsDataSimulator;
 import org.mdanylko.uav.simulator.sensor.Telemetry;
 import org.mdanylko.uav.simulator.simulator.UAVDataSimulator;
+import org.mdanylko.uav.simulator.simulator.sensor.VelocitySimulator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,11 +18,15 @@ public class UAVDataSimulatorImpl implements UAVDataSimulator {
     private static final Logger log = LoggerFactory.getLogger(UAVDataSimulatorImpl.class);
     private final GpsDataSimulator gpsSimulator;
     private final AttitudeDataSimulator attitudeSimulator;
+    private final VelocitySimulator velocitySimulator;
+    private final Status status;
 
 
-    public UAVDataSimulatorImpl(GpsDataSimulator gpsSimulator, AttitudeDataSimulator attitudeSimulator) {
+    public UAVDataSimulatorImpl(GpsDataSimulator gpsSimulator, AttitudeDataSimulator attitudeSimulator, VelocitySimulator velocitySimulator) {
        this.gpsSimulator = gpsSimulator;
         this.attitudeSimulator = attitudeSimulator;
+        this.velocitySimulator = velocitySimulator;
+        this.status = new Status(true, false);
     }
 
     @Override
@@ -34,12 +40,15 @@ public class UAVDataSimulatorImpl implements UAVDataSimulator {
                 Telemetry telemetry = new Telemetry(LocalDateTime.now());
                 telemetry.setGps(gpsSimulator.getGps());
                 telemetry.setAttitude(attitudeSimulator.getAttitude());
+                telemetry.setVelocity(velocitySimulator.getVelocity());
+                telemetry.setStatus(status);
 
 
                 log.info("Telemetry: {}", telemetry);
 
                 gpsSimulator.generateGps(intervalMs);
                 attitudeSimulator.simulateAtt(intervalMs);
+                velocitySimulator.simulateVel(intervalMs, gpsSimulator.getGps());
 
                 Thread.sleep(intervalMs);
                 counter++;
