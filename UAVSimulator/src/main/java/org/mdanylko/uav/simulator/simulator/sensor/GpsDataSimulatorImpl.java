@@ -1,4 +1,4 @@
-package org.mdanylko.uav.simulator.generator.sensor;
+package org.mdanylko.uav.simulator.simulator.sensor;
 
 import org.mdanylko.uav.simulator.sensor.GPS;
 import org.springframework.stereotype.Service;
@@ -6,17 +6,18 @@ import org.springframework.stereotype.Service;
 import java.util.Random;
 
 @Service
-public class GpsDataGeneratorImpl implements GpsDataGenerator {
+public class GpsDataSimulatorImpl implements GpsDataSimulator {
 
     private GPS gps;
+    private final Random rnd = new Random();
     // Earth radius in meters
     private static final double R = 6_371_000;
 
-    public GpsDataGeneratorImpl() {
+    public GpsDataSimulatorImpl() {
         this.gps = new GPS(49.8397, 24.0297, 350.0, 12.5, 45.0);
     }
 
-    public GpsDataGeneratorImpl(GPS gps) {
+    public GpsDataSimulatorImpl(GPS gps) {
         this.gps = gps;
     }
 
@@ -36,7 +37,6 @@ public class GpsDataGeneratorImpl implements GpsDataGenerator {
     }
 
     private void simulateGPS(GPS gps, long intervalMs) {
-        Random rnd = new Random();
         // add small random jitter (sensor noise)
         double jitterLat = (rnd.nextDouble() - 0.5) * 1e-5; // ~1 meter-level
         double jitterLon = (rnd.nextDouble() - 0.5) * 1e-5;
