@@ -1,8 +1,14 @@
 package org.mdanylko.uav.simulator.sensor;
 
-public class Battery {
+public class Battery implements Cloneable {
     private double voltage;
     private double current;
+
+
+    public Battery(double current, double voltage) {
+        this.current = current;
+        this.voltage = voltage;
+    }
 
     public double getVoltage() {
         return voltage;
@@ -26,5 +32,14 @@ public class Battery {
                 "voltage=" + voltage +
                 ", current=" + current +
                 '}';
+    }
+
+    @Override
+    protected Battery clone() {
+        try {
+            return (Battery) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
