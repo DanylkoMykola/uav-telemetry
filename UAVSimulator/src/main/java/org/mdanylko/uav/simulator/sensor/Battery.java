@@ -1,4 +1,4 @@
-package org.mdanylko.uav.simulator.entity;
+package org.mdanylko.uav.simulator.sensor;
 
 public class Battery {
     private double voltage;

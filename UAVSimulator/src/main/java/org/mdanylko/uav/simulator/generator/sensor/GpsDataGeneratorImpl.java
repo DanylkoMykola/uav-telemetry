@@ -1,46 +1,38 @@
-package org.mdanylko.uav.simulator.generator.impl;
+package org.mdanylko.uav.simulator.generator.sensor;
 
-import org.mdanylko.uav.simulator.entity.GPS;
-import org.mdanylko.uav.simulator.entity.Telemetry;
-import org.mdanylko.uav.simulator.generator.UAVDataSimulator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.mdanylko.uav.simulator.sensor.GPS;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Random;
 
 @Service
-public class UAVDataSimulatorImpl implements UAVDataSimulator {
+public class GpsDataGeneratorImpl implements GpsDataGenerator {
 
-    private static final Logger log = LoggerFactory.getLogger(UAVDataSimulatorImpl.class);
-
+    private GPS gps;
     // Earth radius in meters
     private static final double R = 6_371_000;
 
+    public GpsDataGeneratorImpl() {
+        this.gps = new GPS(49.8397, 24.0297, 350.0, 12.5, 45.0);
+    }
+
+    public GpsDataGeneratorImpl(GPS gps) {
+        this.gps = gps;
+    }
+
     @Override
-    public void generateTelemetry() {
-        GPS gps = getGPSData();
-        int iterations = 300;
-        int counter = 0;
-        long intervalMs = 1000;
+    public GPS getGps() {
+        return gps;
+    }
 
-        while (iterations > counter) {
-            try {
-                Telemetry telemetry = new Telemetry(LocalDateTime.now());
-                telemetry.setGps(gps);
+    @Override
+    public void setGps(GPS gps) {
+        this.gps = gps;
+    }
 
-
-                log.info("Telemetry: {}", telemetry);
-
-                simulateGPS(gps, intervalMs);
-
-                Thread.sleep(intervalMs);
-                counter++;
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
+    @Override
+    public void generateGps(long intervalMs) {
+        simulateGPS(this.gps, intervalMs);
     }
 
     private void simulateGPS(GPS gps, long intervalMs) {
@@ -62,10 +54,6 @@ public class UAVDataSimulatorImpl implements UAVDataSimulator {
         gps.setLon(next[1]);
         // small alt change to simulate climb/descent
         gps.setAlt(gps.getAlt() + ((rnd.nextDouble() - 0.5) * 0.2));
-    }
-
-    private GPS getGPSData() {
-        return new GPS(49.8397, 24.0297, 350.0, 12.5, 45.0);
     }
 
     /**

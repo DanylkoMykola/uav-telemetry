@@ -1,6 +1,6 @@
 package org.mdanylko.uav.simulator;
 
-import org.mdanylko.uav.simulator.generator.UAVDataSimulator;
+import org.mdanylko.uav.simulator.generator.UAVDataGenerator;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,9 +8,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class UavSimulatorApplication implements CommandLineRunner {
     
-    UAVDataSimulator simulator;
+    UAVDataGenerator simulator;
 
-    public UavSimulatorApplication(UAVDataSimulator simulator) {
+    public UavSimulatorApplication(UAVDataGenerator simulator) {
         this.simulator = simulator;
     }
 
