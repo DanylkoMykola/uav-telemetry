@@ -1,29 +1,22 @@
 package org.mdanylko.uav.simulator;
 
 import org.mdanylko.uav.simulator.simulator.UAVDataSimulator;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 
 @SpringBootApplication
-public class UavSimulatorApplication implements CommandLineRunner {
-    
-    UAVDataSimulator simulator;
-
-    public UavSimulatorApplication(UAVDataSimulator simulator) {
-        this.simulator = simulator;
-    }
+public class UavSimulatorApplication {
 
     public static void main(String[] args) {
         //SpringApplication.run(UavSimulatorApplication.class, args);
-        SpringApplication app = new SpringApplication(UavSimulatorApplication.class);
+        //SpringApplication app = new SpringApplication(UavSimulatorApplication.class);
         //Run as cli for now. Revert this changes to make it run as webapp.
-        app.setWebApplicationType(org.springframework.boot.WebApplicationType.NONE);
-        app.run(args);
-    }
+        //app.setWebApplicationType(org.springframework.boot.WebApplicationType.NONE);
+        //app.run(args);
 
-    @Override
-    public void run(String... args) throws Exception {
+        ApplicationContext context = SpringApplication.run(UavSimulatorApplication.class, args);
+        UAVDataSimulator simulator = context.getBean(UAVDataSimulator.class);
         System.out.println("Run UAV Data Simulator");
         simulator.generateTelemetry();
     }

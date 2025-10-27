@@ -1,6 +1,7 @@
 package org.mdanylko.uav.simulator.simulator.impl;
 
 import org.mdanylko.uav.simulator.sensor.Status;
+import org.mdanylko.uav.simulator.service.TelemetryService;
 import org.mdanylko.uav.simulator.simulator.sensor.AttitudeDataSimulator;
 import org.mdanylko.uav.simulator.simulator.sensor.BatterySimulator;
 import org.mdanylko.uav.simulator.simulator.sensor.GpsDataSimulator;
@@ -23,13 +24,15 @@ public class UAVDataSimulatorImpl implements UAVDataSimulator {
     private final VelocitySimulator velocitySimulator;
     private final BatterySimulator batterySimulator;
     private final Status status;
+    private TelemetryService service;
 
 
-    public UAVDataSimulatorImpl(GpsDataSimulator gpsSimulator, AttitudeDataSimulator attitudeSimulator, VelocitySimulator velocitySimulator, BatterySimulator batterySimulator) {
+    public UAVDataSimulatorImpl(GpsDataSimulator gpsSimulator, AttitudeDataSimulator attitudeSimulator, VelocitySimulator velocitySimulator, BatterySimulator batterySimulator, TelemetryService service) {
        this.gpsSimulator = gpsSimulator;
         this.attitudeSimulator = attitudeSimulator;
         this.velocitySimulator = velocitySimulator;
         this.batterySimulator = batterySimulator;
+        this.service = service;
         this.status = new Status(true, false);
     }
 
@@ -51,6 +54,7 @@ public class UAVDataSimulatorImpl implements UAVDataSimulator {
 
 
                 log.info("Telemetry: {}", telemetry);
+                service.sendTelemetry(telemetry);
 
                 gpsSimulator.generateGps(intervalMs);
                 attitudeSimulator.simulateAtt(intervalMs);

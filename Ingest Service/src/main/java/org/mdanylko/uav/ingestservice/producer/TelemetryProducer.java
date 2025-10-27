@@ -1,4 +1,5 @@
 package org.mdanylko.uav.ingestservice.producer;
 
-public interface TelemeryProducer {
+public interface TelemetryProducer {
+    void sendTelemetry(Object telemetry);
 }
