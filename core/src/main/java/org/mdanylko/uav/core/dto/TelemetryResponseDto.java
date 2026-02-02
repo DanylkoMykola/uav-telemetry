@@ -1,4 +1,4 @@
-package org.mdanylko.uav.simulator.dto;
+package org.mdanylko.uav.core.dto;
 
 public class TelemetryResponseDto {
     private String timestamp;
