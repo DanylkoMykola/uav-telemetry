@@ -1,5 +1,6 @@
 package org.mdanylko.uav.ingestservice.producer;
 
+import org.mdanylko.uav.ingestservice.utils.KafkaTopics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -18,7 +19,7 @@ public class TelemetryProducerImpl implements TelemetryProducer {
 
     @Override
     public void sendTelemetry(Object telemetry) {
-        kafkaTemplate.send("uav.telemetry", telemetry);
+        kafkaTemplate.send(KafkaTopics.TELEMETRY_TOPIC, telemetry);
         log.info("Sent telemetry to Kafka: {}", telemetry);
     }
 }

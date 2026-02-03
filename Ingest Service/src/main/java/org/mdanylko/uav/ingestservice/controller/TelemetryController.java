@@ -1,4 +1,4 @@
-package org.mdanylko.uav.ingestservice.controler;
+package org.mdanylko.uav.ingestservice.controller;
 
 import org.mdanylko.uav.ingestservice.producer.TelemetryProducer;
 import org.springframework.http.ResponseEntity;
