@@ -9,11 +9,22 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JacksonJsonSerializer
       acks: all
+      retries: 10
       properties:
-        enable.idempotence: true
-        min.insync.replicas: 2
-    consumer:
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
-      properties:
-        spring.json.trusted.packages: "*"
+        enable:
+          idempotence: true
+        min:
+          insync:
+            replicas: 2
+        linger:
+          ms: 0
+        request:
+          timeout:
+            ms: 30000
+        delivery:
+          timeout:
+            ms: 120000
+        retry:
+          backoff:
+            ms: 1000
+
