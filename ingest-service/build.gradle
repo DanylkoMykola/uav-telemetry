@@ -27,6 +27,9 @@ dependencies {
 // Source: https://mvnrepository.com/artifact/io.confluent/kafka-avro-serializer
     implementation 'io.confluent:kafka-avro-serializer:8.1.1'
     implementation 'org.apache.avro:avro:1.12.1'
+
+    implementation 'org.mdanylko.uav.core:core:0.0.1-SNAPSHOT'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

@@ -1,5 +1,8 @@
 package org.mdanylko.uav.ingestservice.controller;
 
+import org.mdanylko.uav.core.dto.TelemetryRequestDto;
+import org.mdanylko.uav.core.dto.TelemetryResponseDto;
+import org.mdanylko.uav.ingestservice.messaging.KafkaTelemetryEventProducer;
 import org.mdanylko.uav.ingestservice.producer.IRecordSender;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,15 +16,15 @@ import java.util.Map;
 @RequestMapping("/telemetry")
 public class TelemetryController {
 
-    private final IRecordSender producer;
+    private final KafkaTelemetryEventProducer producer;
 
-    public TelemetryController(IRecordSender producer) {
+    public TelemetryController(KafkaTelemetryEventProducer producer) {
         this.producer = producer;
     }
 
     @PostMapping
-    public ResponseEntity<String> ingest(@RequestBody Map<String, Object> telemetry) {
-        producer.sendTelemetry(telemetry);
+    public ResponseEntity<String> ingest(@RequestBody TelemetryRequestDto telemetry) {
+        producer.publishEvent(telemetry);
         return ResponseEntity.ok("Telemetry ingested");
     }
 }

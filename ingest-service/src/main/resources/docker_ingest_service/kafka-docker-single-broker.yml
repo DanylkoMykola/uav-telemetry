@@ -1,0 +1,67 @@
+version: '3.8'
+
+networks:
+  uav-network:
+    driver: bridge
+
+services:
+  kafka-1:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka-1
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      CLUSTER_ID: "WnLkTHhkQaiJbwP8FClPhw"
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-1:9091
+      KAFKA_LISTENERS: PLAINTEXT://:9090,CONTROLLER://:9091,EXTERNAL://:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:9090, EXTERNAL://${HOSTNAME:-localhost}:29092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+    volumes:
+      - ./volumes/kafka-1-data:/var/lib/kafka/data
+    networks:
+      - uav-network
+
+  kafka-exporter:
+    image: danielqsj/kafka-exporter:latest
+    container_name: kafka-exporter
+    networks:
+      - uav-network
+    depends_on:
+      - kafka-1
+    restart: on-failure
+    environment:
+      KAFKA_BROKERS: PLAINTEXT://kafka-1:9092
+      DEBUG: "false"
+    ports:
+      - "9308:9308"
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    networks:
+      - uav-network
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - kafka-exporter
+
+  grafana:
+    image: grafana/grafana:10.1.1
+    container_name: grafana
+    networks:
+      - uav-network
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus

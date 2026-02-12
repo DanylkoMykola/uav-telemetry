@@ -2,6 +2,51 @@ package org.mdanylko.uav.core.dto;
 
 public class TelemetryRequestDto {
     private String timestamp;
+    private GPS gps;
+    private Velocity velocity;
+    private Attitude attitude;
+    private Battery battery;
+    private Status status;
+
+    public GPS getGps() {
+        return gps;
+    }
+
+    public void setGps(GPS gps) {
+        this.gps = gps;
+    }
+
+    public Velocity getVelocity() {
+        return velocity;
+    }
+
+    public void setVelocity(Velocity velocity) {
+        this.velocity = velocity;
+    }
+
+    public Attitude getAttitude() {
+        return attitude;
+    }
+
+    public void setAttitude(Attitude attitude) {
+        this.attitude = attitude;
+    }
+
+    public Battery getBattery() {
+        return battery;
+    }
+
+    public void setBattery(Battery battery) {
+        this.battery = battery;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 
     public static class GPS {
         private double lat;

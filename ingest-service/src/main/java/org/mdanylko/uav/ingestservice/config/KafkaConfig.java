@@ -43,7 +43,7 @@ public class KafkaConfig<K, V> {
     @Value("${spring.kafka.producer.retries}")
     private String retries;
 
-    @Value("${ingest.kafka.topic-name}")
+    @Value("${app.kafka.telemetry.topic.name}")
     private String topicName;
 
     Map<String, Object> producerConfigs() {

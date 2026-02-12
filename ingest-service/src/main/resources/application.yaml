@@ -28,7 +28,9 @@ spring:
           backoff:
             ms: 1000
 
-ingest:
+app:
   kafka:
-    topic-name: uav-telemetry-topic
+    telemetry:
+      topic:
+        name: uav-telemetry-topic
 
