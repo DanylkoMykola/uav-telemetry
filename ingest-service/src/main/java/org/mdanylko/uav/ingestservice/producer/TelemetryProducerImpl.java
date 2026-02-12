@@ -1,25 +1,21 @@
 package org.mdanylko.uav.ingestservice.producer;
 
-import org.mdanylko.uav.ingestservice.utils.KafkaTopics;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.avro.specific.SpecificRecord;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TelemetryProducerImpl implements TelemetryProducer {
+public class TelemetryProducerImpl implements IRecordSender<String, SpecificRecord> {
 
-    private static final Logger log = LoggerFactory.getLogger(TelemetryProducer.class);
+    private final KafkaTemplate<String, SpecificRecord> kafkaTemplate;
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
-
-    public TelemetryProducerImpl(KafkaTemplate<String, Object> kafkaTemplate) {
+    public TelemetryProducerImpl(KafkaTemplate<String, SpecificRecord> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
-    public void sendTelemetry(Object telemetry) {
-        kafkaTemplate.send(KafkaTopics.TELEMETRY_TOPIC, telemetry);
-        log.info("Sent telemetry to Kafka: {}", telemetry);
+    public void sendToKafka(ProducerRecord<String, SpecificRecord> producerRecord) {
+        sendRecord(kafkaTemplate, producerRecord);
     }
 }

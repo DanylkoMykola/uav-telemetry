@@ -2,7 +2,6 @@ package org.mdanylko.uav.ingestservice.config;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.mdanylko.uav.ingestservice.utils.KafkaTopics;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,6 +43,9 @@ public class KafkaConfig<K, V> {
     @Value("${spring.kafka.producer.retries}")
     private String retries;
 
+    @Value("${ingest.kafka.topic-name}")
+    private String topicName;
+
     Map<String, Object> producerConfigs() {
         Map<String, Object> config = new HashMap<>();
 
@@ -73,7 +75,7 @@ public class KafkaConfig<K, V> {
 
     @Bean
     public NewTopic telemetryTopic() {
-        return TopicBuilder.name(KafkaTopics.TELEMETRY_TOPIC)
+        return TopicBuilder.name(topicName)
                 .partitions(3)
                 .replicas(3)
                 .build();

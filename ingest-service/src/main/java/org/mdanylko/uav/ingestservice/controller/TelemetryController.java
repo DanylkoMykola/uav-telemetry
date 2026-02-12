@@ -1,6 +1,6 @@
 package org.mdanylko.uav.ingestservice.controller;
 
-import org.mdanylko.uav.ingestservice.producer.TelemetryProducer;
+import org.mdanylko.uav.ingestservice.producer.IRecordSender;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,9 +13,9 @@ import java.util.Map;
 @RequestMapping("/telemetry")
 public class TelemetryController {
 
-    private final TelemetryProducer producer;
+    private final IRecordSender producer;
 
-    public TelemetryController(TelemetryProducer producer) {
+    public TelemetryController(IRecordSender producer) {
         this.producer = producer;
     }
 
