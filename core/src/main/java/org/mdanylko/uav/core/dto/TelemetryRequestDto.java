@@ -1,6 +1,7 @@
 package org.mdanylko.uav.core.dto;
 
 public class TelemetryRequestDto {
+    private String id;
     private String timestamp;
     private GPS gps;
     private Velocity velocity;
@@ -109,5 +110,8 @@ public class TelemetryRequestDto {
 
     public String getTimestamp() { return timestamp; }
     public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
+
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 }
 

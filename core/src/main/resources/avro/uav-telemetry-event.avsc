@@ -4,6 +4,7 @@
   "namespace": "org.mdanylko.uav.avro",
   "fields": [
     { "name": "timestamp", "type": "string" },
+    { "name": "id", "type": "string" },
 
     {
       "name": "gps",

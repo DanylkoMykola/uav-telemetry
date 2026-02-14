@@ -30,7 +30,7 @@ public class KafkaTelemetryEventProducerImpl implements KafkaTelemetryEventProdu
         UavTelemetryEvent telemetryRecord = telemetryMapper.toEvent(telemetryDto);
         ProducerRecord<String, SpecificRecord> producerRecord = new ProducerRecord<>(topicName,
                 0,
-                "",
+                telemetryRecord.getId(),
                 telemetryRecord,
                 Collections.EMPTY_LIST);
 

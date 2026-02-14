@@ -3,7 +3,7 @@ package org.mdanylko.uav.simulator.sensor;
 import java.time.LocalDateTime;
 
 public class Telemetry {
-    private String name;
+    private String id;
     private LocalDateTime timestamp;
     private Attitude attitude;
     private Battery battery;
@@ -11,8 +11,8 @@ public class Telemetry {
     private Status status;
     private Velocity velocity;
 
-    public Telemetry(String name) {
-        this.name = name;
+    public Telemetry(String id) {
+        this.id = id;
     }
 
     public LocalDateTime getTimestamp() {
@@ -63,18 +63,18 @@ public class Telemetry {
         this.velocity = velocity;
     }
 
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("Telemetry{");
-        sb.append("  name=").append(name);
+        sb.append("  id=").append(id);
         sb.append("  timestamp=").append(timestamp);
         sb.append(", attitude=").append(attitude);
         sb.append(", battery=").append(battery);
