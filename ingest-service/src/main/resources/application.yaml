@@ -5,17 +5,19 @@ spring:
   application.name: Ingest Service
   kafka:
     bootstrap-servers: localhost:29092
+    schema-registry:
+      url: http://localhost:8081
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JacksonJsonSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
       acks: all
       retries: 10
       properties:
         enable:
-          idempotence: true
+          idempotence: false
         min:
           insync:
-            replicas: 2
+            replicas: 1
         linger:
           ms: 0
         request:

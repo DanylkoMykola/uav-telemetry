@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'maven-publish'
+    id 'com.github.davidmc24.gradle.plugin.avro' version '1.9.1'
 }
 
 group = 'org.mdanylko.uav.core'
@@ -17,6 +18,11 @@ java {
     }
 }
 
+dependencies {
+// Source: https://mvnrepository.com/artifact/org.apache.avro/avro
+    implementation 'org.apache.avro:avro:1.12.1'
+}
+
 repositories {
     mavenLocal()
     mavenCentral()
@@ -24,6 +30,28 @@ repositories {
 
 tasks.named('jar') {
     enabled = true
+}
+
+tasks.withType(JavaCompile).configureEach {
+    dependsOn tasks.named("generateAvroJava")
+}
+
+tasks.named("generateAvroJava") {
+    source(file("/src/main/resources/avro"))
+    outputDir = file("$buildDir/generated-sources/avro")
+
+    stringType = "String"
+    createSetters = false
+    enableDecimalLogicalType = true
+    fieldVisibility = "PRIVATE"
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir "$buildDir/generated-sources/avro"
+        }
+    }
 }
 
 // `core/build.gradle`

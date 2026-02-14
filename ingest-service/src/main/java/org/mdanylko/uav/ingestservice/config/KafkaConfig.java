@@ -46,6 +46,9 @@ public class KafkaConfig<K, V> {
     @Value("${app.kafka.telemetry.topic.name}")
     private String topicName;
 
+    @Value("${spring.kafka.schema-registry.url:http://localhost:8081}")
+    private String schemaRegistryUrl;
+
     Map<String, Object> producerConfigs() {
         Map<String, Object> config = new HashMap<>();
 
@@ -58,6 +61,7 @@ public class KafkaConfig<K, V> {
         config.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, requestTimeout);
         config.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, idempotence);
         config.put(ProducerConfig.RETRIES_CONFIG, retries);
+        config.put("schema.registry.url", schemaRegistryUrl);
 
         return config;
     }
