@@ -17,8 +17,8 @@ public class KafkaTelemetryEventProducerImpl implements KafkaTelemetryEventProdu
     private final IRecordSender<String, SpecificRecord> recordSender;
     private final TelemetryMapper telemetryMapper;
 
-    @Value("${app.kafka.telemetry.topic.name}")
-    private String topicName;
+    @Value("${app.kafka.telemetry.topics.raw}")
+    private String rawTelemetryTopicName;
 
     public KafkaTelemetryEventProducerImpl(IRecordSender<String, SpecificRecord> recordSender, TelemetryMapper telemetryMapper) {
         this.recordSender = recordSender;
@@ -28,7 +28,7 @@ public class KafkaTelemetryEventProducerImpl implements KafkaTelemetryEventProdu
     @Override
     public void publishEvent(TelemetryRequestDto telemetryDto) {
         UavTelemetryEvent telemetryRecord = telemetryMapper.toEvent(telemetryDto);
-        ProducerRecord<String, SpecificRecord> producerRecord = new ProducerRecord<>(topicName,
+        ProducerRecord<String, SpecificRecord> producerRecord = new ProducerRecord<>(rawTelemetryTopicName,
                 0,
                 telemetryRecord.getId(),
                 telemetryRecord,

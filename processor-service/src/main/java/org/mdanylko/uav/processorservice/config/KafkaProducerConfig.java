@@ -1,4 +1,4 @@
-package org.mdanylko.uav.ingestservice.config;
+package org.mdanylko.uav.processorservice.config;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class KafkaConfig<K, V> {
+public class KafkaProducerConfig<K, V> {
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
@@ -45,6 +45,12 @@ public class KafkaConfig<K, V> {
 
     @Value("${app.kafka.telemetry.topics.raw}")
     private String rawTelemetryTopicName;
+
+    @Value("${app.kafka.telemetry.topics.processed}")
+    private String processedTelemetryTopicName;
+
+    @Value("${app.kafka.telemetry.topics.alert}")
+    private String alertTelemetryTopicName;
 
     @Value("${spring.kafka.schema-registry.url:http://localhost:8081}")
     private String schemaRegistryUrl;
@@ -78,10 +84,18 @@ public class KafkaConfig<K, V> {
 
 
     @Bean
-    public NewTopic telemetryTopic() {
-        return TopicBuilder.name(rawTelemetryTopicName)
+    public NewTopic processedTopic() {
+        return TopicBuilder.name(processedTelemetryTopicName)
                 .partitions(3)
-                .replicas(3)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic alertTopic() {
+        return TopicBuilder.name(alertTelemetryTopicName)
+                .partitions(3)
+                .replicas(1)
                 .build();
     }
 }

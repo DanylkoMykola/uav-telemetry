@@ -1,8 +1,8 @@
-server:
-  port: 8087
-
 spring:
-  application.name: Ingest Service
+  application:
+    name: Processor Service
+
+
   kafka:
     bootstrap-servers: localhost:29092
     schema-registry:
@@ -29,10 +29,21 @@ spring:
         retry:
           backoff:
             ms: 1000
+    consumer:
+      bootstrap-servers: localhost:29092
+      schema-registry:
+        url: http://localhost:8081
+      group-id: processor-service-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      properties:
+        specific.avro.reader: true
+        json-trusted-packages: '"*"'
 
 app:
   kafka:
     telemetry:
       topics:
         raw: uav-telemetry-raw
-
+        processed: uav-telemetry-processed
+        alert: uav-telemetry-alert
