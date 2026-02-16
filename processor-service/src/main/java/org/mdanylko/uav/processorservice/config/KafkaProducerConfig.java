@@ -43,9 +43,6 @@ public class KafkaProducerConfig<K, V> {
     @Value("${spring.kafka.producer.retries}")
     private String retries;
 
-    @Value("${app.kafka.telemetry.topics.raw}")
-    private String rawTelemetryTopicName;
-
     @Value("${app.kafka.telemetry.topics.processed}")
     private String processedTelemetryTopicName;
 
@@ -86,7 +83,7 @@ public class KafkaProducerConfig<K, V> {
     @Bean
     public NewTopic processedTopic() {
         return TopicBuilder.name(processedTelemetryTopicName)
-                .partitions(3)
+                .partitions(1)
                 .replicas(1)
                 .build();
     }

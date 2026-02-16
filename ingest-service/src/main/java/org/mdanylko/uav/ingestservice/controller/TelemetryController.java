@@ -1,24 +1,20 @@
 package org.mdanylko.uav.ingestservice.controller;
 
 import org.mdanylko.uav.core.dto.TelemetryRequestDto;
-import org.mdanylko.uav.core.dto.TelemetryResponseDto;
-import org.mdanylko.uav.ingestservice.messaging.KafkaTelemetryEventProducer;
-import org.mdanylko.uav.ingestservice.producer.IRecordSender;
+import org.mdanylko.uav.ingestservice.messaging.TelemetryEventProducer;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/telemetry")
 public class TelemetryController {
 
-    private final KafkaTelemetryEventProducer producer;
+    private final TelemetryEventProducer producer;
 
-    public TelemetryController(KafkaTelemetryEventProducer producer) {
+    public TelemetryController(TelemetryEventProducer producer) {
         this.producer = producer;
     }
 

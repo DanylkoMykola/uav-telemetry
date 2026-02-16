@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 
 @Service
-public class KafkaTelemetryEventProducerImpl implements KafkaTelemetryEventProducer {
+public class KafkaTelemetryEventProducerImpl implements TelemetryEventProducer {
 
     private final IRecordSender<String, SpecificRecord> recordSender;
     private final TelemetryMapper telemetryMapper;
