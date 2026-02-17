@@ -1,0 +1,73 @@
+{
+  "type": "record",
+  "name": "UavTelemetryProcessedEvent",
+  "namespace": "org.mdanylko.uav.avro",
+  "fields": [
+    { "name": "timestamp", "type": "string" },
+    { "name": "id", "type": "string" },
+    { "name": "processingTime", "type": "string" },
+
+    {
+      "name": "gps",
+      "type": {
+        "type": "record",
+        "name": "GPS",
+        "fields": [
+          { "name": "lat", "type": "double" },
+          { "name": "lon", "type": "double" },
+          { "name": "alt", "type": "double" }
+        ]
+      }
+    },
+
+    {
+      "name": "velocity",
+      "type": {
+        "type": "record",
+        "name": "Velocity",
+        "fields": [
+          { "name": "vx", "type": "double" },
+          { "name": "vy", "type": "double" },
+          { "name": "vz", "type": "double" }
+        ]
+      }
+    },
+
+    {
+      "name": "attitude",
+      "type": {
+        "type": "record",
+        "name": "Attitude",
+        "fields": [
+          { "name": "roll", "type": "double" },
+          { "name": "pitch", "type": "double" },
+          { "name": "yaw", "type": "double" }
+        ]
+      }
+    },
+
+    {
+      "name": "battery",
+      "type": {
+        "type": "record",
+        "name": "Battery",
+        "fields": [
+          { "name": "voltage", "type": "double" },
+          { "name": "current", "type": "double" }
+        ]
+      }
+    },
+
+    {
+      "name": "status",
+      "type": {
+        "type": "record",
+        "name": "Status",
+        "fields": [
+          { "name": "armed", "type": "boolean" },
+          { "name": "failsafe", "type": "boolean" }
+        ]
+      }
+    }
+  ]
+}

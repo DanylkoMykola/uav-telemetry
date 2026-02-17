@@ -2,18 +2,18 @@ package org.mdanylko.uav.processorservice.messaging;
 
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.mdanylko.uav.avro.UavTelemetryEvent;
-import org.mdanylko.uav.core.dto.TelemetryRequestDto;
+import org.mdanylko.uav.avro.UavTelemetryAlertEvent;
+import org.mdanylko.uav.avro.UavTelemetryProcessedEvent;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.Optional;
 
 @Service
-public class KafkaTelemetryEventProducerImpl implements TelemetryEventProducer {
+public class KafkaTelemetryEventProducerImpl implements TelemetryEventProducer, IRecordSender<String, SpecificRecord> {
 
-    private final IRecordSender<String, SpecificRecord> recordSender;
+    private KafkaTemplate<String, SpecificRecord> kafkaTemplate;
 
     @Value("${app.kafka.telemetry.topics.processed}")
     private String processedTelemetryTopicName;
@@ -21,29 +21,34 @@ public class KafkaTelemetryEventProducerImpl implements TelemetryEventProducer {
     @Value("${app.kafka.telemetry.topics.alert}")
     private String alertTelemetryTopicName;
 
-    public KafkaTelemetryEventProducerImpl(IRecordSender<String, SpecificRecord> recordSender) {
-        this.recordSender = recordSender;
+    public KafkaTelemetryEventProducerImpl(KafkaTemplate<String, SpecificRecord> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
-    public void publishProcessedEvent(UavTelemtryProcessedEvent event) {
+    public void publishProcessedEvent(UavTelemetryProcessedEvent event) {
         ProducerRecord<String, SpecificRecord> producerRecord = new ProducerRecord<>(processedTelemetryTopicName,
                 0,
                 event.getId(),
                 event,
                 Collections.EMPTY_LIST);
 
-        recordSender.sendToKafka(producerRecord);
+        sendToKafka(producerRecord);
     }
 
     @Override
-    public void publishAlertEvent(UavTelemtryAlertEvent event) {
+    public void publishAlertEvent(UavTelemetryAlertEvent event) {
         ProducerRecord<String, SpecificRecord> producerRecord = new ProducerRecord<>(alertTelemetryTopicName,
                 0,
                 event.getId(),
                 event,
                 Collections.EMPTY_LIST);
 
-        recordSender.sendToKafka(producerRecord);
+        sendToKafka(producerRecord);
+    }
+
+    @Override
+    public void sendToKafka(ProducerRecord producerRecord) {
+        sendRecord(kafkaTemplate, producerRecord);
     }
 }
