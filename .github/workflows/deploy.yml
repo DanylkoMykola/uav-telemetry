@@ -115,7 +115,7 @@ jobs:
         K8S_FILE=$(ls k8s/*$SERVICE_NAME.yaml)
         
         # Replace ACCOUNT_ID and Image Tag
-        sed -i "s|REPLACE_WITH_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com|$ECR_REGISTRY|g" $K8S_FILE
+        sed -i "s|\${AWS_ACCOUNT_ID}|$ECR_REGISTRY|g" $K8S_FILE
         sed -i "s|$SERVICE_NAME:latest|$SERVICE_NAME:$IMAGE_TAG|g" $K8S_FILE
         
         # Apply the specific service manifest

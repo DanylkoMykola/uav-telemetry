@@ -2,7 +2,7 @@ terraform {
   required_version = ">= 1.5.0"
 
   backend "s3" {
-    bucket         = "REPLACE_WITH_YOUR_S3_BUCKET_NAME"
+    bucket         = "mykola-uav-terraform-state"
     key            = "terraform.tfstate"
     region         = "us-east-1"
     encrypt        = true
@@ -23,7 +23,7 @@ provider "aws" {
 variable "aws_region" {
   description = "AWS region"
   type        = string
-  default     = "eu-central-1"
+  default     = "us-east-1"
 }
 
 variable "project_name" {

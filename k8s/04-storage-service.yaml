@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: storage-service
-        image: REPLACE_WITH_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/uav-telemetry/storage-service:latest
+        image: ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/uav-telemetry/storage-service:latest
         env:
         - name: KAFKA_BOOTSTRAP_SERVERS
           valueFrom:
