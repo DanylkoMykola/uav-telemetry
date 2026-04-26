@@ -1,8 +1,10 @@
-name: Autonomous Deploy to AWS EKS
+name: Deploy to AWS EKS
 
 on:
+  workflow_dispatch: # Manual trigger for safety
   push:
-    branches: [ "main" ]
+    paths:
+      - 'github/workflows/**' # Auto-trigger only if terraform files change
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}

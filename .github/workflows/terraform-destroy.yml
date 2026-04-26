@@ -1,4 +1,4 @@
-name: Infrastructure Destroy (Terraform)
+destrouname: Infrastructure Destroy (Terraform)
 
 on:
   workflow_dispatch:
