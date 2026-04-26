@@ -1,5 +1,8 @@
 # UAV Telemetry Ingestion & Processing System
 
+![Deploy Status](https://github.com/DanylkoMykola/uav-telemetry/actions/workflows/deploy.yml/badge.svg)
+![Environment: Dev](https://img.shields.io/badge/Environment-Dev-blue)
+
 A distributed, event-driven microservices architecture designed for real-time monitoring, processing, and alerting of Unmanned Aerial Vehicle (UAV) telemetry data.
 
 ---
