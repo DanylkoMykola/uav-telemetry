@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: telemetry-config
+  namespace: uav-telemetry
+data:
+  # To be updated with Terraform outputs
+  KAFKA_BOOTSTRAP_SERVERS: "REPLACE_WITH_KAFKA_IP:9092"
+  DATABASE_URL: "jdbc:postgresql://REPLACE_WITH_RDS_ENDPOINT:5432/uav_telemetry"
+  SCHEMA_REGISTRY_URL: "http://REPLACE_WITH_SCHEMA_REGISTRY_URL:8081"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: telemetry-secrets
+  namespace: uav-telemetry
+type: Opaque
+data:
+  # base64 encoded password (replace with your actual password)
+  DATABASE_PASSWORD: "cmVwbGFjZS1tZS13aXRoLWJhc2U2NA=="

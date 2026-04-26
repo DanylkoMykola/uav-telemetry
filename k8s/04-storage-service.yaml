@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: storage-service
+  namespace: uav-telemetry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: storage-service
+  template:
+    metadata:
+      labels:
+        app: storage-service
+    spec:
+      containers:
+      - name: storage-service
+        image: REPLACE_WITH_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/uav-telemetry/storage-service:latest
+        env:
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          valueFrom:
+            configMapKeyRef:
+              name: telemetry-config
+              key: KAFKA_BOOTSTRAP_SERVERS
+        - name: DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: telemetry-config
+              key: DATABASE_URL
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: telemetry-secrets
+              key: DATABASE_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: storage-service
+  namespace: uav-telemetry
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+  selector:
+    app: storage-service

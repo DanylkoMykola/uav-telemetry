@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ingest-service
+  namespace: uav-telemetry
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ingest-service
+  template:
+    metadata:
+      labels:
+        app: ingest-service
+    spec:
+      containers:
+      - name: ingest-service
+        image: REPLACE_WITH_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/uav-telemetry/ingest-service:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          valueFrom:
+            configMapKeyRef:
+              name: telemetry-config
+              key: KAFKA_BOOTSTRAP_SERVERS
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingest-service
+  namespace: uav-telemetry
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: ingest-service

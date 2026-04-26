@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashboard-service
+  namespace: uav-telemetry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dashboard-service
+  template:
+    metadata:
+      labels:
+        app: dashboard-service
+    spec:
+      containers:
+      - name: dashboard-service
+        image: REPLACE_WITH_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/uav-telemetry/dashboard-service:latest
+        ports:
+        - containerPort: 8082
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: telemetry-config
+              key: DATABASE_URL
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: telemetry-secrets
+              key: DATABASE_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dashboard-service
+  namespace: uav-telemetry
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8082
+  selector:
+    app: dashboard-service

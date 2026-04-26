@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alert-service
+  namespace: uav-telemetry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alert-service
+  template:
+    metadata:
+      labels:
+        app: alert-service
+    spec:
+      containers:
+      - name: alert-service
+        image: REPLACE_WITH_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/uav-telemetry/alert-service:latest
+        env:
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          valueFrom:
+            configMapKeyRef:
+              name: telemetry-config
+              key: KAFKA_BOOTSTRAP_SERVERS
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alert-service
+  namespace: uav-telemetry
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+  selector:
+    app: alert-service
