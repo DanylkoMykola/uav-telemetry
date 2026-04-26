@@ -1,7 +1,7 @@
 version: '3.8'
 
 networks:
-  uav-network:
+  uav-telemetry-network:
     driver: bridge
 
 services:
@@ -25,7 +25,7 @@ services:
     volumes:
       - ./volumes/kafka-1-data:/var/lib/kafka/data
     networks:
-      - uav-network
+      - uav-telemetry-network
 
   kafka-2:
     image: confluentinc/cp-kafka:latest
@@ -46,7 +46,7 @@ services:
     volumes:
       - ./volumes/kafka-2-data:/var/lib/kafka/data
     networks:
-      - uav-network
+      - uav-telemetry-network
 
   kafka-3:
     image: confluentinc/cp-kafka:latest
@@ -67,13 +67,13 @@ services:
     volumes:
       - ./volumes/kafka-3-data:/var/lib/kafka/data
     networks:
-      - uav-network
+      - uav-telemetry-network
 
   kafka-exporter:
     image: danielqsj/kafka-exporter:latest
     container_name: kafka-exporter
     networks:
-      - uav-network
+      - uav-telemetry-network
     depends_on:
       - kafka-1
     restart: on-failure
@@ -87,7 +87,7 @@ services:
     image: prom/prometheus:latest
     container_name: prometheus
     networks:
-      - uav-network
+      - uav-telemetry-network
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
@@ -99,7 +99,7 @@ services:
     image: grafana/grafana:10.1.1
     container_name: grafana
     networks:
-      - uav-network
+      - uav-telemetry-network
     ports:
       - "3000:3000"
     environment:

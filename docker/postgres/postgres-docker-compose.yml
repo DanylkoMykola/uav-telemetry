@@ -18,7 +18,8 @@ services:
 
 networks:
   uav-network:
-    external: true
+    name: uav-telemetry-network
+    driver: bridge
 
 volumes:
   postgres-data:

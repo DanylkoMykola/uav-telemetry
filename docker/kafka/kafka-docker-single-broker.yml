@@ -1,7 +1,7 @@
 version: '3.8'
 
 networks:
-  uav-network:
+  uav-telemetry-network:
     driver: bridge
 
 services:
@@ -37,7 +37,7 @@ services:
       retries: 5
       start_period: 30s
     networks:
-      - uav-network
+      - uav-telemetry-network
 
   schema-registry:
     image: confluentinc/cp-schema-registry:latest
@@ -51,4 +51,4 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka-1:9092
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
     networks:
-      - uav-network
+      - uav-telemetry-network
