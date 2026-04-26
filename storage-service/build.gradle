@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.2'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'org.mdanylko.uav.storageservice'
+version = '0.0.1-SNAPSHOT'
+description = 'Storage Service'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url = uri("https://packages.confluent.io/maven/") }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.kafka:spring-kafka'
+    
+    // Database
+    runtimeOnly 'org.postgresql:postgresql'
+    
+    // Serialization
+    implementation 'io.confluent:kafka-avro-serializer:7.5.1'
+    implementation 'org.apache.avro:avro:1.11.3'
+
+    // Shared Core
+    implementation 'org.mdanylko.uav.core:core:0.0.1-SNAPSHOT'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
