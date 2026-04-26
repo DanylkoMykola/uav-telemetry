@@ -21,6 +21,7 @@ java {
 dependencies {
 // Source: https://mvnrepository.com/artifact/org.apache.avro/avro
     implementation 'org.apache.avro:avro:1.12.1'
+    implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
 }
 
 repositories {

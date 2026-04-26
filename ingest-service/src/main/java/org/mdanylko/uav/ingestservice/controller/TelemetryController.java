@@ -1,5 +1,6 @@
 package org.mdanylko.uav.ingestservice.controller;
 
+import jakarta.validation.Valid;
 import org.mdanylko.uav.core.dto.TelemetryRequestDto;
 import org.mdanylko.uav.ingestservice.messaging.TelemetryEventProducer;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class TelemetryController {
     }
 
     @PostMapping
-    public ResponseEntity<String> ingest(@RequestBody TelemetryRequestDto telemetry) {
+    public ResponseEntity<String> ingest(@Valid @RequestBody TelemetryRequestDto telemetry) {
         producer.publishEvent(telemetry);
         return ResponseEntity.ok("Telemetry ingested");
     }
