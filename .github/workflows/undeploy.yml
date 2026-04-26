@@ -1,4 +1,4 @@
-name: Autonomous Undeploy Application
+name: Undeploy Application
 
 on:
   workflow_dispatch:
