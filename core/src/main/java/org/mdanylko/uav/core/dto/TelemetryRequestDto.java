@@ -1,12 +1,34 @@
 package org.mdanylko.uav.core.dto;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class TelemetryRequestDto {
+    @NotBlank(message = "UAV ID is required")
     private String id;
+
+    @NotBlank(message = "Timestamp is required")
     private String timestamp;
+
+    @NotNull(message = "GPS data is required")
+    @Valid
     private GPS gps;
+
+    @NotNull(message = "Velocity data is required")
+    @Valid
     private Velocity velocity;
+
+    @NotNull(message = "Attitude data is required")
+    @Valid
     private Attitude attitude;
+
+    @NotNull(message = "Battery data is required")
+    @Valid
     private Battery battery;
+
+    @NotNull(message = "Status data is required")
+    @Valid
     private Status status;
 
     public GPS getGps() {
@@ -50,62 +72,75 @@ public class TelemetryRequestDto {
     }
 
     public static class GPS {
-        private double lat;
-        private double lon;
-        private double alt;
+        @NotNull
+        private Double lat;
+        @NotNull
+        private Double lon;
+        @NotNull
+        private Double alt;
 
-        public double getLat() { return lat; }
-        public void setLat(double lat) { this.lat = lat; }
-        public double getLon() { return lon; }
-        public void setLon(double lon) { this.lon = lon; }
-        public double getAlt() { return alt; }
-        public void setAlt(double alt) { this.alt = alt; }
+        public Double getLat() { return lat; }
+        public void setLat(Double lat) { this.lat = lat; }
+        public Double getLon() { return lon; }
+        public void setLon(Double lon) { this.lon = lon; }
+        public Double getAlt() { return alt; }
+        public void setAlt(Double alt) { this.alt = alt; }
     }
 
     public static class Velocity {
-        private double vx;
-        private double vy;
-        private double vz;
+        @NotNull
+        private Double vx;
+        @NotNull
+        private Double vy;
+        @NotNull
+        private Double vz;
 
-        public double getVx() { return vx; }
-        public void setVx(double vx) { this.vx = vx; }
-        public double getVy() { return vy; }
-        public void setVy(double vy) { this.vy = vy; }
-        public double getVz() { return vz; }
-        public void setVz(double vz) { this.vz = vz; }
+        public Double getVx() { return vx; }
+        public void setVx(Double vx) { this.vx = vx; }
+        public Double getVy() { return vy; }
+        public void setVy(Double vy) { this.vy = vy; }
+        public Double getVz() { return vz; }
+        public void setVz(Double vz) { this.vz = vz; }
     }
 
     public static class Attitude {
-        private double roll;
-        private double pitch;
-        private double yaw;
+        @NotNull
+        private Double roll;
+        @NotNull
+        private Double pitch;
+        @NotNull
+        private Double yaw;
 
-        public double getRoll() { return roll; }
-        public void setRoll(double roll) { this.roll = roll; }
-        public double getPitch() { return pitch; }
-        public void setPitch(double pitch) { this.pitch = pitch; }
-        public double getYaw() { return yaw; }
-        public void setYaw(double yaw) { this.yaw = yaw; }
+        public Double getRoll() { return roll; }
+        public void setRoll(Double roll) { this.roll = roll; }
+        public Double getPitch() { return pitch; }
+        public void setPitch(Double pitch) { this.pitch = pitch; }
+        public Double getYaw() { return yaw; }
+        public void setYaw(Double yaw) { this.yaw = yaw; }
     }
 
     public static class Battery {
-        private double voltage;
-        private double current;
+        @NotNull
+        private Double voltage;
+        @NotNull
+        private Double current;
 
-        public double getVoltage() { return voltage; }
-        public void setVoltage(double voltage) { this.voltage = voltage; }
-        public double getCurrent() { return current; }
-        public void setCurrent(double current) { this.current = current; }
+        public Double getVoltage() { return voltage; }
+        public void setVoltage(Double voltage) { this.voltage = voltage; }
+        public Double getCurrent() { return current; }
+        public void setCurrent(Double current) { this.current = current; }
     }
 
     public static class Status {
-        private boolean armed;
-        private boolean failsafe;
+        @NotNull
+        private Boolean armed;
+        @NotNull
+        private Boolean failsafe;
 
-        public boolean isArmed() { return armed; }
-        public void setArmed(boolean armed) { this.armed = armed; }
-        public boolean isFailsafe() { return failsafe; }
-        public void setFailsafe(boolean failsafe) { this.failsafe = failsafe; }
+        public Boolean isArmed() { return armed; }
+        public void setArmed(Boolean armed) { this.armed = armed; }
+        public Boolean isFailsafe() { return failsafe; }
+        public void setFailsafe(Boolean failsafe) { this.failsafe = failsafe; }
     }
 
     public String getTimestamp() { return timestamp; }
@@ -114,4 +149,3 @@ public class TelemetryRequestDto {
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 }
-
