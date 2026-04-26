@@ -1,3 +1,13 @@
+data "aws_ami" "amazon_linux_2023" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-2023*-x86_64"]
+  }
+}
+
 resource "aws_security_group" "kafka" {
   name        = "${var.project_name}-kafka-sg"
   description = "Allow Kafka traffic"
@@ -42,7 +52,7 @@ resource "aws_security_group" "kafka" {
 resource "aws_instance" "kafka" {
   count = 1 # Start with 1 for simplicity
 
-  ami           = "ami-0453ec754f44f9a4a" # Amazon Linux 2023 in us-east-1
+  ami           = data.aws_ami.amazon_linux_2023.id
   instance_type = "t3.large"
   subnet_id     = module.vpc.private_subnets[0]
 
@@ -52,7 +62,9 @@ resource "aws_instance" "kafka" {
   user_data = <<-EOF
               #!/bin/bash
               yum update -y
-              yum install java-21-amazon-corretto-devel -y
+              # Install Java 25 (Amazon Corretto)
+              # Note: Corretto 25 might be in preview, fallback to 21 if not available
+              yum install java-25-amazon-corretto-devel -y || yum install java-21-amazon-corretto-devel -y
               
               # Download Kafka
               wget https://archive.apache.org/dist/kafka/3.7.0/kafka_2.13-3.7.0.tgz

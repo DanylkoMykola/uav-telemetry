@@ -76,23 +76,36 @@ jobs:
       run: |
         aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
 
+    - name: Fetch Infrastructure Outputs
+      id: tf-outputs
+      run: |
+        cd terraform
+        terraform init
+        # Extract the RDS endpoint and Kafka IP from Terraform
+        # We remove quotes and the port from the RDS endpoint for the JDBC string
+        RDS_ENDPOINT=$(terraform output -raw rds_endpoint | cut -d':' -f1)
+        KAFKA_IP=$(terraform output -json kafka_private_ips | jq -r '.[0]')
+        
+        echo "RDS_ENDPOINT=$RDS_ENDPOINT" >> $GITHUB_OUTPUT
+        echo "KAFKA_IP=$KAFKA_IP" >> $GITHUB_OUTPUT
+
     - name: Deploy to EKS
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
         SERVICE_NAME: ${{ matrix.service }}
+        RDS_ENDPOINT: ${{ steps.tf-outputs.outputs.RDS_ENDPOINT }}
+        KAFKA_IP: ${{ steps.tf-outputs.outputs.KAFKA_IP }}
       run: |
         # Apply the namespace first
         kubectl apply -f k8s/00-namespace.yaml
 
-        # Update ConfigMap and Secret with values from GitHub Secrets
-        # Note: These secrets must be set in GitHub repository settings
+        # Update ConfigMap and Secret with values fetched from Terraform
         cp k8s/01-config.yaml k8s/01-config-filled.yaml
-        sed -i "s|REPLACE_WITH_KAFKA_IP|${{ secrets.KAFKA_BOOTSTRAP_IP }}|g" k8s/01-config-filled.yaml
-        sed -i "s|REPLACE_WITH_RDS_ENDPOINT|${{ secrets.RDS_ENDPOINT }}|g" k8s/01-config-filled.yaml
-        sed -i "s|REPLACE_WITH_SCHEMA_REGISTRY_URL|${{ secrets.SCHEMA_REGISTRY_URL }}|g" k8s/01-config-filled.yaml
+        sed -i "s|REPLACE_WITH_KAFKA_IP|$KAFKA_IP|g" k8s/01-config-filled.yaml
+        sed -i "s|REPLACE_WITH_RDS_ENDPOINT|$RDS_ENDPOINT|g" k8s/01-config-filled.yaml
         
-        # Replace the base64 password. We assume DB_PASSWORD secret is the raw password.
+        # Replace the base64 password. We still need DB_PASSWORD from GitHub Secrets.
         B64_PASS=$(echo -n "${{ secrets.DB_PASSWORD }}" | base64)
         sed -i "s|cmVwbGFjZS1tZS13aXRoLWJhc2U2NA==|$B64_PASS|g" k8s/01-config-filled.yaml
         
