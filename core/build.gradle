@@ -38,7 +38,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 tasks.named("generateAvroJava") {
-    source(file("/src/main/resources/avro"))
+    source(file("src/main/resources/avro"))
     outputDir = file("$buildDir/generated-sources/avro")
 
     stringType = "String"

@@ -1,0 +1,48 @@
+name: Autonomous Undeploy Application
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "undeploy" to confirm application removal'
+        required: true
+        default: 'cancel'
+
+jobs:
+  undeploy:
+    if: github.event.inputs.confirm == 'undeploy'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Update Kubeconfig
+      run: |
+        aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
+
+    - name: Delete Application Workloads
+      run: |
+        # Delete using the manifests. We use ignore-not-found to avoid errors if partially deleted.
+        # We delete in reverse order of deployment for cleaner teardown.
+        kubectl delete -f k8s/06-alert-service.yaml --ignore-not-found=true
+        kubectl delete -f k8s/05-dashboard-service.yaml --ignore-not-found=true
+        kubectl delete -f k8s/04-storage-service.yaml --ignore-not-found=true
+        kubectl delete -f k8s/03-processor-service.yaml --ignore-not-found=true
+        kubectl delete -f k8s/02-ingest-service.yaml --ignore-not-found=true
+        
+        # Finally delete configs and the namespace
+        kubectl delete -f k8s/01-config.yaml --ignore-not-found=true
+        kubectl delete -f k8s/00-namespace.yaml --ignore-not-found=true
+        
+    - name: Final Verification
+      run: |
+        echo "Undeployment complete. Workloads removed from EKS."
+        echo "Note: RDS Database, EC2 Kafka, and EKS Cluster are still running."

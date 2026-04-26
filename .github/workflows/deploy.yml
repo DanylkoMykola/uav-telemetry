@@ -1,0 +1,109 @@
+name: Autonomous Deploy to AWS EKS
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  EKS_CLUSTER_NAME: ${{ secrets.EKS_CLUSTER_NAME }}
+  ECR_REPOSITORY_PREFIX: "uav-telemetry"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        service: [ingest-service, processor-service, storage-service, dashboard-service, alert-service]
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 25
+      uses: actions/setup-java@v4
+      with:
+        java-version: '25'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Build Core Module
+      run: |
+        cd core
+        chmod +x gradlew
+        ./gradlew publishToMavenLocal
+
+    - name: Build Service JAR
+      run: |
+        cd ${{ matrix.service }}
+        chmod +x gradlew
+        ./gradlew bootJar
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build, Tag, and Push Image to ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+        SERVICE_NAME: ${{ matrix.service }}
+      run: |
+        # Create a temporary Dockerfile for the service if it doesn't exist
+        cat <<EOF > ${{ matrix.service }}/Dockerfile.deploy
+        FROM eclipse-temurin:25-jre-alpine
+        WORKDIR /app
+        COPY build/libs/*.jar app.jar
+        ENTRYPOINT ["java", "-jar", "app.jar"]
+        EOF
+        
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_PREFIX/$SERVICE_NAME:$IMAGE_TAG -f ${{ matrix.service }}/Dockerfile.deploy ${{ matrix.service }}
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_PREFIX/$SERVICE_NAME:$IMAGE_TAG
+        
+        # Also tag as latest
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY_PREFIX/$SERVICE_NAME:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY_PREFIX/$SERVICE_NAME:latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_PREFIX/$SERVICE_NAME:latest
+
+    - name: Update Kubeconfig
+      run: |
+        aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+
+    - name: Deploy to EKS
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+        SERVICE_NAME: ${{ matrix.service }}
+      run: |
+        # Apply the namespace first
+        kubectl apply -f k8s/00-namespace.yaml
+
+        # Update ConfigMap and Secret with values from GitHub Secrets
+        # Note: These secrets must be set in GitHub repository settings
+        cp k8s/01-config.yaml k8s/01-config-filled.yaml
+        sed -i "s|REPLACE_WITH_KAFKA_IP|${{ secrets.KAFKA_BOOTSTRAP_IP }}|g" k8s/01-config-filled.yaml
+        sed -i "s|REPLACE_WITH_RDS_ENDPOINT|${{ secrets.RDS_ENDPOINT }}|g" k8s/01-config-filled.yaml
+        sed -i "s|REPLACE_WITH_SCHEMA_REGISTRY_URL|${{ secrets.SCHEMA_REGISTRY_URL }}|g" k8s/01-config-filled.yaml
+        
+        # Replace the base64 password. We assume DB_PASSWORD secret is the raw password.
+        B64_PASS=$(echo -n "${{ secrets.DB_PASSWORD }}" | base64)
+        sed -i "s|cmVwbGFjZS1tZS13aXRoLWJhc2U2NA==|$B64_PASS|g" k8s/01-config-filled.yaml
+        
+        kubectl apply -f k8s/01-config-filled.yaml
+        
+        # Use sed to replace image placeholders in the specific k8s manifest
+        K8S_FILE=$(ls k8s/*$SERVICE_NAME.yaml)
+        
+        # Replace ACCOUNT_ID and Image Tag
+        sed -i "s|REPLACE_WITH_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com|$ECR_REGISTRY|g" $K8S_FILE
+        sed -i "s|$SERVICE_NAME:latest|$SERVICE_NAME:$IMAGE_TAG|g" $K8S_FILE
+        
+        # Apply the specific service manifest
+        kubectl apply -f $K8S_FILE
