@@ -76,6 +76,9 @@ jobs:
       run: |
         aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
 
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+
     - name: Fetch Infrastructure Outputs
       id: tf-outputs
       run: |
