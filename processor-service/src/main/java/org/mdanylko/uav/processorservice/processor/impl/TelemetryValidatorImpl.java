@@ -6,24 +6,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class TelemetryValidatorImpl implements TelemetryValidator {
 
-    Logger logger = LoggerFactory.getLogger(TelemetryValidatorImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(TelemetryValidatorImpl.class);
 
     @Override
-    public boolean validateTelemetryEvent(Optional<UavTelemetryEvent> event) {
-        UavTelemetryEvent telemetryEvent = event.orElseThrow(() -> new RuntimeException("Received empty telemetry event"));
-        if (!isValidUavId(telemetryEvent.getId())) {
-            logger.warn("Telemetry event has invalid UAV ID: {}", telemetryEvent.getId());
+    public boolean validate(UavTelemetryEvent event) {
+        if (event == null) {
+            logger.warn("Received null telemetry event");
             return false;
         }
-        if (telemetryEvent.getGps() == null
-                && !isValidLatitude(telemetryEvent.getGps().getLat())
-                && !isValidLongitude(telemetryEvent.getGps().getLon())) {
-            logger.warn("Telemetry event with ID {} has invalid  GPS data", telemetryEvent.getId());
+        if (!isValidUavId(event.getId())) {
+            logger.warn("Telemetry event has invalid UAV ID: {}", event.getId());
+            return false;
+        }
+        if (event.getGps() == null) {
+            logger.warn("Telemetry event with ID {} has null GPS data", event.getId());
+            return false;
+        }
+        if (!isValidLatitude(event.getGps().getLat()) || !isValidLongitude(event.getGps().getLon())) {
+            logger.warn("Telemetry event with ID {} has invalid GPS coordinates: lat={}, lon={}", 
+                        event.getId(), event.getGps().getLat(), event.getGps().getLon());
             return false;
         }
         return true;
