@@ -53,7 +53,7 @@ resource "aws_instance" "kafka" {
   count = 1 # Start with 1 for simplicity
 
   ami           = data.aws_ami.amazon_linux_2023.id
-  instance_type = "t3.large"
+  instance_type = "t3.small"
   subnet_id     = module.vpc.private_subnets[0]
 
   vpc_security_group_ids = [aws_security_group.kafka.id]
